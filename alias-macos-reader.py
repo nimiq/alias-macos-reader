@@ -21,6 +21,7 @@ We will find out that:
 
 
 """
+import sys
 from bitstring import ConstBitStream
 
 
@@ -43,9 +44,9 @@ class AliasReader:
         while True:
             # Read the length of the current token string.
             len_tk = s.read('intle:32')
-            # Move to the beginning of the token string.
-            #s.pos += 32
+            # Read the delimiter.
             delimiter = s.read('intle:32')
+            # If this is not the delimiter I expect, then the aliased path is over.
             if delimiter != 257:
                 break
             # Append to token list.
@@ -61,5 +62,10 @@ class AliasReader:
 
 
 if __name__ == '__main__':
+    try:
+        alias_file_path = sys.argv[1]
+    except IndexError:
+        print('You must provide the path to the alias file!')
+        exit(1)
     reader = AliasReader('samples/1 alias')
     print('The aliased path is:\n{}'.format(reader.find_aliased_path()))
